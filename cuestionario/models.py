@@ -27,11 +27,7 @@ class NivelJerarquico(models.Model):
 class Cargo(models.Model):
     id_cargo = models.IntegerField(primary_key=True)
     nombre_cargo = models.CharField(max_length=50)
-    nivel_jerarquico = models.ForeignKey(
-        NivelJerarquico,
-        on_delete=models.CASCADE,
-        db_column='nivel_jerarquico_id_nivel_jerarquico'
-    )
+    nivel_jerarquico_id_nivel_jerarquico = models.IntegerField()
 
     class Meta:
         managed = False
@@ -49,18 +45,10 @@ class Trabajador(models.Model):
     apellido_materno = models.CharField(max_length=40)
     email = models.CharField(max_length=80)
     departamento = models.CharField(max_length=40)
-    cargo_texto = models.CharField(max_length=40)  # campo CARGO textual
+    cargo = models.CharField(max_length=40)
     genero = models.CharField(max_length=10)
-    nivel_jerarquico = models.ForeignKey(
-        NivelJerarquico,
-        on_delete=models.CASCADE,
-        db_column='nivel_jerarquico_id_nivel_jerarquico'
-    )
-    cargo = models.ForeignKey(
-        Cargo,
-        on_delete=models.CASCADE,
-        db_column='cargo_id_cargo'
-    )
+    nivel_jerarquico_id_nivel_jerarquico = models.IntegerField()
+    cargo_id_cargo = models.IntegerField()
 
     class Meta:
         managed = False
@@ -73,11 +61,7 @@ class Trabajador(models.Model):
 class Competencia(models.Model):
     id_competencia = models.IntegerField(primary_key=True)
     nombre_competencia = models.CharField(max_length=50)
-    dimension = models.ForeignKey(
-        Dimension,
-        on_delete=models.CASCADE,
-        db_column='dimension_id_dimension'
-    )
+    dimension_id_dimension = models.IntegerField()
 
     class Meta:
         managed = False
@@ -91,23 +75,15 @@ class TextosEvaluacion(models.Model):
     id_textos_evaluacion = models.IntegerField(primary_key=True)
     codigo_excel = models.CharField(max_length=10, unique=True)
     texto = models.TextField()
-    competencia = models.ForeignKey(
-        Competencia,
-        on_delete=models.CASCADE,
-        db_column='competencia_id_competencia'
-    )
-    nivel_jerarquico = models.ForeignKey(
-        NivelJerarquico,
-        on_delete=models.CASCADE,
-        db_column='nivel_jerarquico_id_nivel_jerarquico'
-    )
+    competencia_id_competencia = models.IntegerField()
+    nivel_jerarquico_id_nivel_jerarquico = models.IntegerField()
 
     class Meta:
         managed = False
         db_table = 'textos_evaluacion'
 
     def __str__(self):
-        return f"{self.codigo_excel} - {self.competencia}"
+        return self.codigo_excel
 
 
 class Autoevaluacion(models.Model):
@@ -116,16 +92,8 @@ class Autoevaluacion(models.Model):
     fecha_evaluacion = models.DateField()
     momento_evaluacion = models.DateTimeField()
     comentario = models.TextField(null=True, blank=True)
-    trabajador = models.ForeignKey(
-        Trabajador,
-        on_delete=models.CASCADE,
-        db_column='trabajador_id_trabajador'
-    )
-    codigo_excel = models.ForeignKey(
-        TextosEvaluacion,
-        on_delete=models.CASCADE,
-        db_column='codigo_excel'
-    )
+    trabajador_id_trabajador = models.IntegerField()
+    codigo_excel = models.CharField(max_length=10)
 
     class Meta:
         managed = False
@@ -139,16 +107,8 @@ class EvaluacionJefatura(models.Model):
     fecha_evaluacion = models.DateField()
     momento_evaluacion = models.DateTimeField()
     comentario = models.TextField(null=True, blank=True)
-    trabajador = models.ForeignKey(
-        Trabajador,
-        on_delete=models.CASCADE,
-        db_column='trabajador_id_trabajador'
-    )
-    codigo_excel = models.ForeignKey(
-        TextosEvaluacion,
-        on_delete=models.CASCADE,
-        db_column='codigo_excel'
-    )
+    trabajador_id_trabajador = models.IntegerField()
+    codigo_excel = models.CharField(max_length=10)
 
     class Meta:
         managed = False
