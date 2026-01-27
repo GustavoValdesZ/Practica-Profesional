@@ -58,11 +58,15 @@ class Trabajador(models.Model):
 class Competencia(models.Model):
     id_competencia = models.IntegerField(primary_key=True)
     nombre_competencia = models.CharField(max_length=50)
-    dimension_id_dimension = models.IntegerField()
+    dimension = models.ForeignKey('Dimension', on_delete=models.CASCADE, db_column='dimension_id_dimension')
 
     class Meta:
         managed = False
         db_table = 'competencia'
+
+    def __str__(self):
+        return self.nombre_competencia
+
 
 
 class TextosEvaluacion(models.Model):
