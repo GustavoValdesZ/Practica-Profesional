@@ -27,6 +27,10 @@ class Cargo(models.Model):
         managed = False
         db_table = 'cargo'
 
+    def __str__(self):
+        return self.nombre_cargo
+
+
 
 class Trabajador(models.Model):
     id_trabajador = models.IntegerField(primary_key=True)
