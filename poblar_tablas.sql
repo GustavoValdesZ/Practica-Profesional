@@ -1,4 +1,4 @@
---- =========================
+-- =========================
 -- Poblamiento de tabla Dimension
 -- =========================
 INSERT INTO dimension (id_dimension, nombre_dimension)
