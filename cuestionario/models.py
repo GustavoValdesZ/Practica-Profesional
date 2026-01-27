@@ -8,6 +8,10 @@ class Dimension(models.Model):
         managed = False
         db_table = 'dimension'
 
+    def __str__(self):
+        return self.nombre_dimension
+
+
 
 class NivelJerarquico(models.Model):
     id_nivel_jerarquico = models.IntegerField(primary_key=True)
