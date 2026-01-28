@@ -4,7 +4,7 @@
 
 {% block content %}
     <section class="perfil-usuario">
-        <h2>Bienvenido, {{ trabajador.nombre }} {{ trabajador.apellido_paterno }}</h2>
+        <h2>Bienvenid@, {{ trabajador.nombre }} {{ trabajador.apellido_paterno }} {{ trabajador.apellido_materno }}</h2>
         <p><strong>Cargo:</strong> {{ trabajador.cargo.nombre_cargo }}</p>
         <p><strong>Departamento:</strong> {{ trabajador.departamento.nombre_departamento }}</p>
     </section>
@@ -25,7 +25,7 @@
             <ul class="lista-equipo">
                 {% for subordinado in equipo %}
                 <li>
-                    {{ subordinado.nombre }} {{ subordinado.apellido_paterno }} 
+                    {{ subordinado.nombre }} {{ subordinado.apellido_paterno }} {{ subordinado.apellido_materno }}
                     <small>({{ subordinado.cargo.nombre_cargo }})</small>
                     <a href="#" class="btn-subordinado">Evaluar</a>
                 </li>
