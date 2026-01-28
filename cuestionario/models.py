@@ -120,6 +120,9 @@ class Competencia(models.Model):
         managed = False
         db_table = 'competencia'
 
+    def __str__(self):
+        return self.nombre_competencia
+
 # =========================
 # Tabla Textos Evaluacion (depende de Competencia y Nivel Jerarquico)
 # =========================
