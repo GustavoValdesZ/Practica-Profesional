@@ -179,6 +179,9 @@ class Autoevaluacion(models.Model):
         managed = False
         db_table = 'autoevaluacion'
 
+    def __str__(self):
+        return f"{self.codigo_excel.codigo_excel} | {self.puntaje} | {self.trabajador.nombre} {self.trabajador.apellido_paterno} {self.trabajador.apellido_materno} | {self.trabajador.rut}"
+
 # =========================
 # Tabla Evaluacion Jefatura
 # =========================
