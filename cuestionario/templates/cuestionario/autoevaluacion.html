@@ -1,0 +1,44 @@
+{% extends "cuestionario/base.html" %}
+
+{% block content %}
+<h2>Formulario de Autoevaluación</h2>
+<p>Trabajador: <strong>{{ trabajador.nombre }} {{ trabajador.apellido_paterno }}</strong></p>
+<p>Nivel: {{ trabajador.nivel_jerarquico.nombre_nivel_jerarquico }}</p>
+
+<form method="POST">
+    {% csrf_token %}
+    
+    <table border="1" style="width:100%; border-collapse: collapse; margin-top: 20px;">
+        <thead style="background-color: #f2f2f2;">
+            <tr>
+                <th>Código</th>
+                <th>Competencia / Descripción</th>
+                <th style="width: 150px;">Puntaje (0-100)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in preguntas %}
+            <tr>
+                <td style="padding: 10px; text-align: center;">{{ p.codigo_excel }}</td>
+                <td style="padding: 10px;">
+                    <strong>{{ p.competencia.nombre_competencia }}</strong><br>
+                    <small>{{ p.texto }}</small>
+                </td>
+                <td style="padding: 10px; text-align: center;">
+                    <input type="number" name="puntaje_{{ p.id_textos_evaluacion }}" 
+                           min="0" max="100" step="1" required 
+                           style="width: 60px; padding: 5px;">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div style="margin-top: 20px;">
+        <button type="submit" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer;">
+            Guardar Evaluación
+        </button>
+        <a href="{% url 'index' %}?id={{ trabajador.id_trabajador }}" style="margin-left: 10px;">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

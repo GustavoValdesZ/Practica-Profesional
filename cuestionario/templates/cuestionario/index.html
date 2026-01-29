@@ -12,22 +12,30 @@
     <hr>
 
     <section class="acciones-evaluacion">
-        <div class="card autoevaluacion">
+        <div class="card autoevaluacion" style="padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
             <h3>Mi Autoevaluación</h3>
             <p>Se han cargado <strong>{{ preguntas.count }}</strong> competencias para tu nivel: <em>{{ trabajador.nivel_jerarquico.nombre_nivel_jerarquico }}</em>.</p>
-            <a href="#" class="btn-evaluar">Comenzar mi Autoevaluación</a>
+            
+            <a href="{% url 'autoevaluacion' trabajador.id_trabajador %}" 
+               class="btn-evaluar" 
+               style="display: inline-block; background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+               Comenzar mi Autoevaluación
+            </a>
         </div>
 
         {% if es_jefe %}
-        <div class="card equipo" style="border: 1px solid #2c3e50; margin-top: 20px; padding: 15px;">
+        <div class="card equipo" style="border: 2px solid #2c3e50; margin-top: 20px; padding: 20px; border-radius: 8px;">
             <h3>Panel de Jefatura</h3>
             <p>Selecciona un colaborador para evaluar su desempeño:</p>
-            <ul class="lista-equipo">
+            <ul class="lista-equipo" style="list-style: none; padding: 0;">
                 {% for subordinado in equipo %}
-                <li>
-                    {{ subordinado.nombre }} {{ subordinado.apellido_paterno }} {{ subordinado.apellido_materno }}
+                <li style="margin-bottom: 10px; padding: 10px; background: #f9f9f9; border-radius: 4px;">
+                    <strong>{{ subordinado.nombre }} {{ subordinado.apellido_paterno }}</strong>
                     <small>({{ subordinado.cargo.nombre_cargo }})</small>
-                    <a href="#" class="btn-subordinado">Evaluar</a>
+                    
+                    <a href="#" class="btn-subordinado" style="float: right; color: #28a745; text-decoration: none; font-weight: bold;">
+                        Evaluar Colaborador →
+                    </a>
                 </li>
                 {% empty %}
                     <li>No hay subordinados registrados.</li>
@@ -37,9 +45,10 @@
         {% endif %}
     </section>
 
-    <section class="detalle-preguntas" style="margin-top: 30px; opacity: 0.7;">
-        <h4>Preguntas cargadas para tu nivel:</h4>
-        <small>Estas son las competencias que evaluaremos según tu rango jerárquico.</small>
+    <hr>
+
+    <section class="detalle-preguntas" style="margin-top: 30px; opacity: 0.8; font-size: 0.9em;">
+        <h4>Resumen de competencias a evaluar:</h4>
         <ul>
             {% for p in preguntas %}
                 <li><strong>{{ p.codigo_excel }}:</strong> {{ p.competencia.nombre_competencia }}</li>
