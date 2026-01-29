@@ -2,7 +2,7 @@
 -- Tabla Dimension
 -- =========================
 CREATE TABLE DIMENSION (
-    ID_DIMENSION INT NOT NULL,
+    ID_DIMENSION INT NOT NULL AUTO_INCREMENT,
     NOMBRE_DIMENSION VARCHAR(50) NOT NULL,
     PRIMARY KEY (ID_DIMENSION)
 );
@@ -11,7 +11,7 @@ CREATE TABLE DIMENSION (
 -- Tabla Departamento
 -- =========================
 CREATE TABLE DEPARTAMENTO (
-    ID_DEPARTAMENTO INT NOT NULL,
+    ID_DEPARTAMENTO INT NOT NULL AUTO_INCREMENT,
     NOMBRE_DEPARTAMENTO VARCHAR(50) NOT NULL,
     PRIMARY KEY (ID_DEPARTAMENTO)
 );
@@ -20,16 +20,16 @@ CREATE TABLE DEPARTAMENTO (
 -- Tabla Nivel Jerarquico
 -- =========================
 CREATE TABLE NIVEL_JERARQUICO (
-    ID_NIVEL_JERARQUICO INT NOT NULL,
+    ID_NIVEL_JERARQUICO INT NOT NULL AUTO_INCREMENT,
     NOMBRE_NIVEL_JERARQUICO VARCHAR(50) NOT NULL,
     PRIMARY KEY (ID_NIVEL_JERARQUICO)
 );
 
 -- =========================
--- Tabla Cargo (depende de Nivel Jerarquico)
+-- Tabla Cargo
 -- =========================
 CREATE TABLE CARGO (
-    ID_CARGO INT NOT NULL,
+    ID_CARGO INT NOT NULL AUTO_INCREMENT,
     NOMBRE_CARGO VARCHAR(50) NOT NULL,
     NIVEL_JERARQUICO_ID_NIVEL_JERARQUICO INT NOT NULL,
     PRIMARY KEY (ID_CARGO),
@@ -38,10 +38,10 @@ CREATE TABLE CARGO (
 );
 
 -- =========================
--- Tabla Trabajador (depende de Cargo, Nivel, Depto y Jefe)
+-- Tabla Trabajador
 -- =========================
 CREATE TABLE TRABAJADOR (
-    ID_TRABAJADOR INT NOT NULL,
+    ID_TRABAJADOR INT NOT NULL AUTO_INCREMENT,
     RUT VARCHAR(20) NOT NULL,
     ID_JEFE_DIRECTO INT NULL,
     NOMBRE VARCHAR(40) NOT NULL,
@@ -65,10 +65,10 @@ CREATE TABLE TRABAJADOR (
 );
 
 -- =========================
--- Tabla Competencia (depende de Dimension)
+-- Tabla Competencia
 -- =========================
 CREATE TABLE COMPETENCIA (
-    ID_COMPETENCIA INT NOT NULL,
+    ID_COMPETENCIA INT NOT NULL AUTO_INCREMENT,
     NOMBRE_COMPETENCIA VARCHAR(50) NOT NULL,
     DIMENSION_ID_DIMENSION INT NOT NULL,
     PRIMARY KEY (ID_COMPETENCIA),
@@ -77,10 +77,10 @@ CREATE TABLE COMPETENCIA (
 );
 
 -- =========================
--- Tabla Textos Evaluacion (depende de Competencia y Nivel Jerarquico)
+-- Tabla Textos Evaluacion
 -- =========================
 CREATE TABLE TEXTOS_EVALUACION (
-    ID_TEXTOS_EVALUACION INT NOT NULL,
+    ID_TEXTOS_EVALUACION INT NOT NULL AUTO_INCREMENT,
     CODIGO_EXCEL VARCHAR(10) NOT NULL,
     TEXTO TEXT NOT NULL,
     COMPETENCIA_ID_COMPETENCIA INT NOT NULL,
@@ -94,10 +94,10 @@ CREATE TABLE TEXTOS_EVALUACION (
 );
 
 -- =========================
--- Tabla Autoevaluacion (depende de Trabajador y Textos Evaluacion)
+-- Tabla Autoevaluacion
 -- =========================
 CREATE TABLE AUTOEVALUACION (
-    ID_AUTOEVALUACION INT NOT NULL,
+    ID_AUTOEVALUACION INT NOT NULL AUTO_INCREMENT,
     PUNTAJE DECIMAL(5,2) NOT NULL,
     FECHA_EVALUACION DATE NOT NULL,
     MOMENTO_EVALUACION TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -112,10 +112,10 @@ CREATE TABLE AUTOEVALUACION (
 );
 
 -- =========================
--- Tabla Evaluacion Jefatura (depende de Trabajador y Textos Evaluacion)
+-- Tabla Evaluacion Jefatura
 -- =========================
 CREATE TABLE EVALUACION_JEFATURA (
-    ID_EVALUACION_JEFATURA INT NOT NULL,
+    ID_EVALUACION_JEFATURA INT NOT NULL AUTO_INCREMENT,
     PUNTAJE DECIMAL(5,2) NOT NULL,
     EVALUADOR_ID_TRABAJADOR INT NOT NULL,
     FECHA_EVALUACION DATE NOT NULL,
