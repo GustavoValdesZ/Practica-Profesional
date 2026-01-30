@@ -159,6 +159,7 @@ class Autoevaluacion(models.Model):
     puntaje = models.DecimalField(max_digits=5, decimal_places=2)
     fecha_evaluacion = models.DateField()
     momento_evaluacion = models.DateTimeField()
+    estado_finalizacion = models.BooleanField(default=False)
     comentario = models.TextField(null=True, blank=True)
     trabajador = models.ForeignKey(
         'Trabajador', 
@@ -175,7 +176,6 @@ class Autoevaluacion(models.Model):
     class Meta:
         managed = False
         db_table = 'autoevaluacion'
-        # Restricción: Un trabajador solo una respuesta por código de evaluación
         unique_together = (('trabajador', 'codigo_excel'),)
 
     def __str__(self):
@@ -195,6 +195,7 @@ class EvaluacionJefatura(models.Model):
     )
     fecha_evaluacion = models.DateField()
     momento_evaluacion = models.DateTimeField()
+    estado_finalizacion = models.BooleanField(default=False)
     comentario = models.TextField(null=True, blank=True)
     trabajador_evaluado = models.ForeignKey(
         'Trabajador', 
@@ -212,7 +213,6 @@ class EvaluacionJefatura(models.Model):
     class Meta:
         managed = False
         db_table = 'evaluacion_jefatura'
-        # Restricción: El jefe solo puede evaluar una vez cada competencia de su subordinado
         unique_together = (('evaluador', 'trabajador_evaluado', 'codigo_excel'),)
     
     def __str__(self):
