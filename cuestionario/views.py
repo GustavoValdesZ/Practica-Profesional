@@ -58,7 +58,7 @@ def cuestionario_autoevaluacion(request, trabajador_id):
 
     preguntas = TextosEvaluacion.objects.filter(
         nivel_jerarquico=trabajador.nivel_jerarquico
-    ).select_related('competencia').order_by('competencia__nombre_competencia')
+    ).select_related('competencia').order_by('competencia__id_competencia')
 
     context = {
         'trabajador': trabajador,
@@ -95,7 +95,7 @@ def cuestionario_jefatura(request, evaluador_id, evaluado_id):
 
     preguntas = TextosEvaluacion.objects.filter(
         nivel_jerarquico=evaluado.nivel_jerarquico
-    ).select_related('competencia').order_by('competencia__nombre_competencia')
+    ).select_related('competencia').order_by('competencia__id_competencia')
 
     context = {
         'evaluador': evaluador,
