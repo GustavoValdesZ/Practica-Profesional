@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from ..models import Trabajador, TextosEvaluacion, Autoevaluacion, EvaluacionJefatura
 from django.db import transaction
+from .calculos import generar_consolidado 
 
 # =========================
 # LÓGICA AUTOEVALUACIÓN
@@ -66,25 +67,29 @@ def cuestionario_autoevaluacion(request, trabajador_id, dimension=None):
 def finalizar_autoevaluacion(request, trabajador_id):
     if request.method == "POST":
         Autoevaluacion.objects.filter(trabajador_id=trabajador_id).update(estado_finalizacion=True)
+        
+        # NUEVO: Lógica para Gerente General (Sin jefe)
+        trabajador = Trabajador.objects.get(id_trabajador=trabajador_id)
+        if trabajador.id_jefe_directo is None:
+            generar_consolidado(trabajador)
+            
     return redirect('autoevaluacion_inicio', trabajador_id=trabajador_id)
 
 # =========================
 # LÓGICA EVALUACIÓN JEFATURA
 # =========================
 def cuestionario_jefatura(request, evaluador_id, evaluado_id, dimension=None):
+    # ... (Tu código se mantiene igual)
     evaluador = get_object_or_404(Trabajador, id_trabajador=evaluador_id)
     evaluado = get_object_or_404(Trabajador, id_trabajador=evaluado_id)
     
-    # Solo permite entrar si el evaluado YA FINALIZÓ su autoevaluación
     autoeval_lista = Autoevaluacion.objects.filter(
         trabajador=evaluado, 
         estado_finalizacion=True
     ).exists()
 
     if not autoeval_lista:
-        # Si no ha terminado, lo regresamos al index con su ID de jefe
         return redirect(f"/?id={evaluador_id}")
-    # ---------------------------------
 
     if not dimension:
         respuestas = EvaluacionJefatura.objects.filter(evaluador=evaluador, trabajador_evaluado=evaluado)
@@ -149,4 +154,9 @@ def finalizar_evaluacion_jefe(request, evaluador_id, evaluado_id):
             evaluador_id=evaluador_id, 
             trabajador_evaluado_id=evaluado_id
         ).update(estado_finalizacion=True)
-    return redirect('evaluacion_jefe_inicio', evaluador_id=evaluador_id, evaluado_id=evaluador_id)
+        
+        # Generamos el consolidado al terminar el jefe
+        evaluado = Trabajador.objects.get(id_trabajador=evaluado_id)
+        generar_consolidado(evaluado)
+        
+    return redirect('evaluacion_jefe_inicio', evaluador_id=evaluador_id, evaluado_id=evaluado_id)
