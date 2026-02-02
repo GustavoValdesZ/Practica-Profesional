@@ -217,3 +217,56 @@ class EvaluacionJefatura(models.Model):
     
     def __str__(self):
         return f"{self.codigo_excel.codigo_excel} | {self.puntaje} | Jefe: {self.evaluador.nombre} {self.evaluador.apellido_paterno} -> Trabajador Evaluado: {self.trabajador_evaluado.nombre} {self.trabajador_evaluado.apellido_paterno}"
+    
+# =========================
+# Tabla Resultado Consolidado
+# =========================
+class ResultadoConsolidado(models.Model):
+    id_resultado = models.AutoField(primary_key=True)
+    puntaje_autoev = models.DecimalField(max_digits=5, decimal_places=2)
+    puntaje_jefe = models.DecimalField(max_digits=5, decimal_places=2)
+    diferencia = models.DecimalField(max_digits=5, decimal_places=2)
+    prom_competencia = models.DecimalField(max_digits=5, decimal_places=2)
+    prom_dimension = models.DecimalField(max_digits=5, decimal_places=2)
+    prom_general = models.DecimalField(max_digits=5, decimal_places=2)
+
+    trabajador = models.ForeignKey(
+        'Trabajador', 
+        on_delete=models.DO_NOTHING, 
+        db_column='trabajador_id_trabajador'
+    )
+    dimension = models.ForeignKey(
+        'Dimension', 
+        on_delete=models.DO_NOTHING, 
+        db_column='dimension_id_dimension'
+    )
+    competencia = models.ForeignKey(
+        'Competencia', 
+        on_delete=models.DO_NOTHING, 
+        db_column='competencia_id_competencia'
+    )
+    codigo_excel = models.ForeignKey(
+        'TextosEvaluacion', 
+        on_delete=models.DO_NOTHING, 
+        to_field='codigo_excel', 
+        db_column='codigo_excel'
+    )
+    
+    # Control Temporal
+    periodo = models.IntegerField()
+    fecha_consolidacion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'resultado_consolidado'
+        unique_together = (('trabajador', 'codigo_excel', 'periodo'),)
+
+    def __str__(self):
+        return (
+            f"Consolidado {self.periodo} | "
+            f"{self.trabajador.nombre} {self.trabajador.apellido_paterno} {self.trabajador.apellido_materno} | "
+            f"Prom. Dim: {self.prom_dimension} | "
+            f"Prom. Comp: {self.prom_competencia} | "
+            f"Prom. Gral: {self.prom_general} | "
+            f"Dif: {self.diferencia}"
+        )
