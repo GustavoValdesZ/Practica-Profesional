@@ -50,30 +50,48 @@
                             <thead>
                                 <tr>
                                     <th>Colaborador</th>
-                                    <th>Cargo</th>
-                                    <th style="text-align: center;">Acción</th>
+                                    <th>Estado Colaborador</th> <th style="text-align: center;">Acción</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for subordinado in equipo %}
                                 <tr>
-                                    <td style="vertical-align: middle;">{{ subordinado.nombre }} {{ subordinado.apellido_paterno }}</td>
-                                    <td style="vertical-align: middle;">{{ subordinado.cargo.nombre_cargo }}</td>
-                                    <td style="text-align: center;">
-                                        {% if subordinado.ya_evaluado %}
-                                            <a href="{% url 'evaluacion_jefe_inicio' trabajador.id_trabajador subordinado.id_trabajador %}" class="button small">
-                                                ✅ Finalizado (Ver)
-                                            </a>
+                                    <td style="vertical-align: middle;">
+                                        <strong>{{ subordinado.nombre }} {{ subordinado.apellido_paterno }}</strong><br>
+                                        <span style="font-size: 0.8em; opacity: 0.7;">{{ subordinado.cargo.nombre_cargo }}</span>
+                                    </td>
+                                    
+                                    <td style="vertical-align: middle;">
+                                        {% if subordinado.autoevaluacion_terminada %}
+                                            <span style="color: #51ff85; font-size: 0.9em;">✅ Autoevaluación lista</span>
                                         {% else %}
-                                            <a href="{% url 'evaluacion_jefe_inicio' trabajador.id_trabajador subordinado.id_trabajador %}" class="button primary small">
-                                                Evaluar Colaborador →
-                                            </a>
+                                            <span style="color: #ffc107; font-size: 0.9em;">⏳ Pendiente de autoevaluación</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td style="text-align: center;">
+                                        {% if subordinado.autoevaluacion_terminada %}
+                                            {% if subordinado.ya_evaluado %}
+                                                <a href="{% url 'evaluacion_jefe_inicio' trabajador.id_trabajador subordinado.id_trabajador %}" class="button small">
+                                                    ✅ Finalizado (Ver)
+                                                </a>
+                                            {% else %}
+                                                <a href="{% url 'evaluacion_jefe_inicio' trabajador.id_trabajador subordinado.id_trabajador %}" class="button primary small">
+                                                    Evaluar Colaborador →
+                                                </a>
+                                            {% endif %}
+                                        {% else %}
+                                            <button class="button small" disabled 
+                                                    style="opacity: 0.4; cursor: not-allowed;" 
+                                                    title="El colaborador debe finalizar su autoevaluación para que puedas evaluarlo.">
+                                                Bloqueado
+                                            </button>
                                         {% endif %}
                                     </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="3">No hay subordinados asignados.</td>
+                                    <td colspan="3" style="text-align: center;">No hay subordinados asignados.</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

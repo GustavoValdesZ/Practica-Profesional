@@ -10,13 +10,23 @@ def index(request):
     trabajador_id = request.GET.get('id', 1)
     trabajador = get_object_or_404(Trabajador, id_trabajador=trabajador_id)
     
+    # Verifica si el usuario actual terminó su propia autoevaluación
     autoeval_completada = Autoevaluacion.objects.filter(
         trabajador=trabajador, 
         estado_finalizacion=True
     ).exists()
     
     equipo = trabajador.subordinados.all()
+    
+    # BUCLE DE PREPARACIÓN DE EQUIPO
     for sub in equipo:
+        # Esto permite que el botón de jefatura se habilite/deshabilite en el HTML
+        sub.autoevaluacion_terminada = Autoevaluacion.objects.filter(
+            trabajador=sub, 
+            estado_finalizacion=True
+        ).exists()
+        
+        # Verifica si el jefe ya cerró la evaluación de este subordinado
         sub.ya_evaluado = EvaluacionJefatura.objects.filter(
             evaluador=trabajador, 
             trabajador_evaluado=sub,
@@ -57,7 +67,6 @@ def cuestionario_autoevaluacion(request, trabajador_id, dimension=None):
             'ya_finalizado': ya_finalizado
         })
 
-    # SEGURIDAD: Si ya existen respuestas para esta dimensión, no permitir entrar al formulario
     ya_respondido = Autoevaluacion.objects.filter(
         trabajador=trabajador,
         codigo_excel__competencia__dimension__nombre_dimension__icontains=dimension
@@ -104,6 +113,17 @@ def cuestionario_jefatura(request, evaluador_id, evaluado_id, dimension=None):
     evaluador = get_object_or_404(Trabajador, id_trabajador=evaluador_id)
     evaluado = get_object_or_404(Trabajador, id_trabajador=evaluado_id)
     
+    # Solo permite entrar si el evaluado YA FINALIZÓ su autoevaluación
+    autoeval_lista = Autoevaluacion.objects.filter(
+        trabajador=evaluado, 
+        estado_finalizacion=True
+    ).exists()
+
+    if not autoeval_lista:
+        # Si no ha terminado, lo regresamos al index con su ID de jefe
+        return redirect(f"/?id={evaluador_id}")
+    # ---------------------------------
+
     if not dimension:
         respuestas = EvaluacionJefatura.objects.filter(evaluador=evaluador, trabajador_evaluado=evaluado)
         ya_finalizado = respuestas.filter(estado_finalizacion=True).exists()
@@ -125,7 +145,6 @@ def cuestionario_jefatura(request, evaluador_id, evaluado_id, dimension=None):
             'ya_finalizado': ya_finalizado
         })
 
-    # SEGURIDAD: Si ya existen respuestas para esta dimensión, no permitir entrar al formulario
     ya_respondido = EvaluacionJefatura.objects.filter(
         evaluador=evaluador,
         trabajador_evaluado=evaluado,
@@ -171,11 +190,11 @@ def finalizar_evaluacion_jefe(request, evaluador_id, evaluado_id):
     return redirect('evaluacion_jefe_inicio', evaluador_id=evaluador_id, evaluado_id=evaluado_id)
 
 # =========================
-# VISTA DE RESULTADOS (SOLO LECTURA)
+# VISTA DE RESULTADOS
 # =========================
 def ver_resultados(request, trabajador_id, tipo_evaluacion):
     trabajador = get_object_or_404(Trabajador, id_trabajador=trabajador_id)
-    dimension_filtro = request.GET.get('dimension') # Parámetro opcional para filtrar
+    dimension_filtro = request.GET.get('dimension')
 
     if tipo_evaluacion == 'auto':
         respuestas = Autoevaluacion.objects.filter(trabajador=trabajador)
@@ -187,11 +206,9 @@ def ver_resultados(request, trabajador_id, tipo_evaluacion):
 
     respuestas = respuestas.select_related('codigo_excel__competencia__dimension')
 
-    # Aplicamos filtro de dimensión si viene en la URL
     if dimension_filtro:
         respuestas = respuestas.filter(codigo_excel__competencia__dimension__nombre_dimension__icontains=dimension_filtro)
 
-    # Agrupamos por dimensión para el loop del HTML
     dimensiones_data = {}
     dimensiones_nombres = respuestas.values_list('codigo_excel__competencia__dimension__nombre_dimension', flat=True).distinct()
     
