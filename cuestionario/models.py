@@ -149,7 +149,7 @@ class TextosEvaluacion(models.Model):
         db_table = 'textos_evaluacion'
 
     def __str__(self):
-        return f"[{self.codigo_excel}] {self.competencia.nombre_competencia}"
+        return f"[{self.codigo_excel}]"
 
 # =========================
 # Tabla Autoevaluacion
