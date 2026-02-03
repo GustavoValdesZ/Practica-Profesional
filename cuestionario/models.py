@@ -226,9 +226,9 @@ class ResultadoConsolidado(models.Model):
     puntaje_autoev = models.DecimalField(max_digits=5, decimal_places=2)
     puntaje_jefe = models.DecimalField(max_digits=5, decimal_places=2)
     diferencia = models.DecimalField(max_digits=5, decimal_places=2)
-    prom_competencia = models.DecimalField(max_digits=5, decimal_places=2)
-    prom_dimension = models.DecimalField(max_digits=5, decimal_places=2)
-    prom_general = models.DecimalField(max_digits=5, decimal_places=2)
+    # prom_competencia = models.DecimalField(max_digits=5, decimal_places=2)
+    # prom_dimension = models.DecimalField(max_digits=5, decimal_places=2)
+    # prom_general = models.DecimalField(max_digits=5, decimal_places=2)
 
     trabajador = models.ForeignKey(
         'Trabajador', 
@@ -268,8 +268,8 @@ class ResultadoConsolidado(models.Model):
             f"Dim: {self.dimension.nombre_dimension if self.dimension else 'N/A'} | "
             f"Comp: {self.competencia.nombre_competencia if self.competencia else 'N/A'} | "
             f"{self.codigo_excel} | "
-            f"Prom. Dim: {self.prom_dimension} | "
-            f"Prom. Comp: {self.prom_competencia} | "
-            f"Prom. Gral: {self.prom_general} | "
+            #f"Prom. Dim: {self.prom_dimension} | "
+            #f"Prom. Comp: {self.prom_competencia} | "
+            #f"Prom. Gral: {self.prom_general} | "
             f"Dif: {self.diferencia}"
         )

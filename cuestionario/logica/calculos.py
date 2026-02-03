@@ -21,36 +21,40 @@ def generar_consolidado(trabajador, periodo=None):
         estado_finalizacion=True
     )
 
-    # 4. Cálculo del Promedio General
-    # Si tiene jefe y este terminó, manda el jefe. Si es Gerente (sin jefe), manda la auto.
-    if tiene_jefe and respuestas_jefe.exists():
-        prom_gral = respuestas_jefe.aggregate(Avg('puntaje'))['puntaje__avg']
-    else:
-        prom_gral = respuestas_auto.aggregate(Avg('puntaje'))['puntaje__avg']
+    # 4. Cálculo del Promedio General (COMENTADO DE MOMENTO)
+    # if tiene_jefe and respuestas_jefe.exists():
+    #     prom_gral = respuestas_jefe.aggregate(Avg('puntaje'))['puntaje__avg']
+    # else:
+    #     prom_gral = respuestas_auto.aggregate(Avg('puntaje'))['puntaje__avg']
 
     # 5. Iterar sobre cada pregunta de la autoevaluación para cruzar datos
     for r_auto in respuestas_auto:
         p_jefe = 0
         diff = 0
         
-        # Buscar la nota del jefe para esta pregunta específica
+        # LÓGICA DE CRUCE:
         if tiene_jefe and respuestas_jefe.exists():
+            # Si tiene jefe, buscamos la respuesta espejo
             r_jefe = respuestas_jefe.filter(codigo_excel=r_auto.codigo_excel).first()
             if r_jefe:
                 p_jefe = r_jefe.puntaje
                 diff = p_jefe - r_auto.puntaje
+        else:
+            # SI NO TIENE JEFE: Forzamos puntaje jefe y diferencia a 0
+            p_jefe = 0
+            diff = 0
 
         pregunta = r_auto.codigo_excel 
         comp = pregunta.competencia
         dim = comp.dimension
 
-        # Calcular promedios específicos (Dimensión y Competencia)
-        if tiene_jefe and respuestas_jefe.exists():
-            prom_dim = respuestas_jefe.filter(codigo_excel__competencia__dimension=dim).aggregate(Avg('puntaje'))['puntaje__avg']
-            prom_comp = respuestas_jefe.filter(codigo_excel__competencia=comp).aggregate(Avg('puntaje'))['puntaje__avg']
-        else:
-            prom_dim = respuestas_auto.filter(codigo_excel__competencia__dimension=dim).aggregate(Avg('puntaje'))['puntaje__avg']
-            prom_comp = respuestas_auto.filter(codigo_excel__competencia=comp).aggregate(Avg('puntaje'))['puntaje__avg']
+        # Calcular promedios específicos (COMENTADO DE MOMENTO)
+        # if tiene_jefe and respuestas_jefe.exists():
+        #     prom_dim = respuestas_jefe.filter(codigo_excel__competencia__dimension=dim).aggregate(Avg('puntaje'))['puntaje__avg']
+        #     prom_comp = respuestas_jefe.filter(codigo_excel__competencia=comp).aggregate(Avg('puntaje'))['puntaje__avg']
+        # else:
+        #     prom_dim = respuestas_auto.filter(codigo_excel__competencia__dimension=dim).aggregate(Avg('puntaje'))['puntaje__avg']
+        #     prom_comp = respuestas_auto.filter(codigo_excel__competencia=comp).aggregate(Avg('puntaje'))['puntaje__avg']
 
         # 6. Guardar o actualizar en la tabla ResultadoConsolidado
         ResultadoConsolidado.objects.update_or_create(
@@ -61,9 +65,9 @@ def generar_consolidado(trabajador, periodo=None):
                 'puntaje_autoev': r_auto.puntaje,
                 'puntaje_jefe': p_jefe,
                 'diferencia': diff,
-                'prom_competencia': prom_comp,
-                'prom_dimension': prom_dim,
-                'prom_general': prom_gral,
+                # 'prom_competencia': prom_comp,
+                # 'prom_dimension': prom_dim,
+                # 'prom_general': prom_gral,
                 'dimension': dim,
                 'competencia': comp,
             }
