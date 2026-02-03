@@ -172,6 +172,11 @@ class Autoevaluacion(models.Model):
         to_field='codigo_excel', 
         db_column='codigo_excel'
     )
+    nivel_jerarquico = models.ForeignKey(
+        'NivelJerarquico', 
+        on_delete=models.DO_NOTHING, 
+        db_column='nivel_jerarquico_id_nivel_jerarquico'
+    )
 
     class Meta:
         managed = False
@@ -209,6 +214,11 @@ class EvaluacionJefatura(models.Model):
         to_field='codigo_excel', 
         db_column='codigo_excel'
     )
+    nivel_jerarquico = models.ForeignKey(
+        'NivelJerarquico', 
+        on_delete=models.DO_NOTHING, 
+        db_column='nivel_jerarquico_id_nivel_jerarquico'
+    )
 
     class Meta:
         managed = False
@@ -226,9 +236,6 @@ class ResultadoConsolidado(models.Model):
     puntaje_autoev = models.DecimalField(max_digits=5, decimal_places=2)
     puntaje_jefe = models.DecimalField(max_digits=5, decimal_places=2)
     diferencia = models.DecimalField(max_digits=5, decimal_places=2)
-    # prom_competencia = models.DecimalField(max_digits=5, decimal_places=2)
-    # prom_dimension = models.DecimalField(max_digits=5, decimal_places=2)
-    # prom_general = models.DecimalField(max_digits=5, decimal_places=2)
 
     trabajador = models.ForeignKey(
         'Trabajador', 
@@ -251,6 +258,11 @@ class ResultadoConsolidado(models.Model):
         to_field='codigo_excel', 
         db_column='codigo_excel'
     )
+    nivel_jerarquico = models.ForeignKey(
+        'NivelJerarquico', 
+        on_delete=models.DO_NOTHING, 
+        db_column='nivel_jerarquico_id_nivel_jerarquico'
+    )
     
     # Control Temporal
     periodo = models.IntegerField()
@@ -268,8 +280,5 @@ class ResultadoConsolidado(models.Model):
             f"Dim: {self.dimension.nombre_dimension if self.dimension else 'N/A'} | "
             f"Comp: {self.competencia.nombre_competencia if self.competencia else 'N/A'} | "
             f"{self.codigo_excel} | "
-            #f"Prom. Dim: {self.prom_dimension} | "
-            #f"Prom. Comp: {self.prom_competencia} | "
-            #f"Prom. Gral: {self.prom_general} | "
             f"Dif: {self.diferencia}"
         )

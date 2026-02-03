@@ -70,5 +70,6 @@ def generar_consolidado(trabajador, periodo=None):
                 # 'prom_general': prom_gral,
                 'dimension': dim,
                 'competencia': comp,
+                'nivel_jerarquico': r_auto.nivel_jerarquico,
             }
         )
