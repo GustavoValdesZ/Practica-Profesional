@@ -11,7 +11,7 @@ admin.site.index_title = "Panel de Control Evaluación 2026"
 
 @admin.register(Trabajador)
 class TrabajadorAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'apellido_paterno', 'apellido_materno', 'rut', 'email', 'cargo', 'departamento', 'id_jefe_directo')
+    list_display = ('id_trabajador', 'nombre', 'apellido_paterno', 'apellido_materno', 'rut', 'email', 'nivel_jerarquico', 'cargo', 'departamento', 'id_jefe_directo')
     list_filter = ('nivel_jerarquico', 'departamento', 'cargo')
     search_fields = ('nombre', 'apellido_paterno', 'rut', 'email')
     ordering = ('apellido_paterno', 'nombre')
