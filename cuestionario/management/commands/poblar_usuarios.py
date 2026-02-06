@@ -3,31 +3,36 @@ from django.contrib.auth.models import User
 from cuestionario.models import Trabajador
 
 class Command(BaseCommand):
-    help = 'Crea y vincula usuarios de Django para trabajadores que no tienen uno'
+    help = 'Crea y vincula usuarios de Django para trabajadores'
 
     def handle(self, *args, **kwargs):
         self.stdout.write('Iniciando vinculación de usuarios...')
-        
-        # Filtramos trabajadores sin usuario vinculado
         trabajadores_sin_user = Trabajador.objects.filter(user__isnull=True)
         
         contador = 0
         for t in trabajadores_sin_user:
-            # 1. Verificamos si el usuario ya existe para no duplicar
             user, created = User.objects.get_or_create(
                 username=t.email,
-                defaults={'email': t.email, 'first_name': t.nombre}
+                defaults={
+                    'email': t.email, 
+                    'first_name': t.nombre,
+                    'last_name': f"{t.apellido_paterno} {t.apellido_materno}",
+                    'is_staff': False
+                }
             )
             
-            # 2. Le asignamos la contraseña correctamente (hasheada)
+            # Sincronizamos nombres y quitamos staff
+            user.first_name = t.nombre
+            user.last_name = f"{t.apellido_paterno} {t.apellido_materno}"
             user.set_password('Mohala2026')
+            user.is_staff = False 
             user.save()
             
-            # 3. Vinculamos el usuario al trabajador
             t.user = user
             t.save()
             
-            self.stdout.write(self.style.SUCCESS(f"✅ Usuario creado para: {t.email}"))
+            # Mensaje limpio para la consola
+            self.stdout.write(self.style.SUCCESS(f"✅ Usuario procesado: {t.email}"))
             contador += 1
 
-        self.stdout.write(self.style.SUCCESS(f'--- Proceso finalizado. {contador} usuarios procesados ---'))
+        self.stdout.write(self.style.SUCCESS(f'--- Proceso finalizado. {contador} usuarios listos ---'))

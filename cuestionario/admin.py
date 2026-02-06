@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import (
     Dimension, Departamento, NivelJerarquico, Cargo, Trabajador, 
     Competencia, TextosEvaluacion, Autoevaluacion, 
@@ -8,6 +10,24 @@ from .models import (
 # --- Configuración Estética ---
 admin.site.site_header = "Administración Sistema Mohala"
 admin.site.index_title = "Panel de Control Evaluación 2026"
+
+admin.site.unregister(User)
+
+@admin.register(User)
+class MyUserAdmin(BaseUserAdmin):
+    list_display = ('username', 'email', 'get_rut', 'first_name', 'get_paterno', 'get_materno', 'is_staff')
+    
+    @admin.display(description='RUT')
+    def get_rut(self, obj):
+        return obj.trabajador.rut if hasattr(obj, 'trabajador') else "---"
+
+    @admin.display(description='A. Paterno')
+    def get_paterno(self, obj):
+        return obj.trabajador.apellido_paterno if hasattr(obj, 'trabajador') else "---"
+
+    @admin.display(description='A. Materno')
+    def get_materno(self, obj):
+        return obj.trabajador.apellido_materno if hasattr(obj, 'trabajador') else "---"
 
 @admin.register(Trabajador)
 class TrabajadorAdmin(admin.ModelAdmin):
